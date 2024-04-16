@@ -1,6 +1,6 @@
 import { getEpisodesOfShow, searchShowsByTerm } from "./models";
 
-const $showsList = document.querySelector("#showsList") as HTMLElement; // Best way?
+const $showsList = document.querySelector("#showsList") as HTMLElement;
 const $episodesList = document.querySelector("#episodesList") as HTMLUListElement;
 const $episodesArea = document.querySelector("#episodesArea") as HTMLElement;
 const $searchForm = document.querySelector("#searchForm") as HTMLFormElement;
@@ -41,11 +41,11 @@ async function searchForShowAndDisplay(): Promise<void> {
   const searchTerm = $term.value;
   const shows: tShows[] = await searchShowsByTerm(searchTerm);
 
-  $episodesArea.innerHTML = "";
+  $episodesList.innerHTML = "";
   populateShows(shows);
 }
 
-$searchForm.addEventListener("submit", async function (evt): Promise<void> {
+$searchForm.addEventListener("submit", async function (evt : Event): Promise<void> {
   evt.preventDefault();
   await searchForShowAndDisplay();
 });
@@ -66,7 +66,7 @@ function populateEpisodes(episodes: tEpisodes[]): void {
     $episodesList.append($item);
   }
 
-  $episodesArea.classList.remove("hidden");
+  $episodesArea.hidden = false;
 }
 
 /** Handle click on episodes button: get episodes for show and display */
@@ -74,14 +74,14 @@ function populateEpisodes(episodes: tEpisodes[]): void {
 async function getEpisodesAndDisplay(evt: Event): Promise<void> {
   if (evt !== null) {
     const $clicked = evt.target as HTMLButtonElement;
-    if (!$clicked.classList.contains(".Show-getEpisodes")) return;
+    if (!$clicked.classList.contains("Show-getEpisodes")) return;
 
     // here's one way to get the ID of the show: search "closest" ancestor
     // with the class of .Show (which is put onto the enclosing div, which
     // has the .data-show-id attribute).
     const $closest = (evt.target as HTMLButtonElement).closest(".Show") as HTMLDivElement;
     const showId = Number($closest.getAttribute("data-show-id"));
-    const episodes = await getEpisodesOfShow(showId);
+    const episodes: tEpisodes[] = await getEpisodesOfShow(showId);
     populateEpisodes(episodes);
   }
 }
